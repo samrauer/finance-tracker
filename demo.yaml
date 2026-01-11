@@ -1,0 +1,32 @@
+################################
+#         Example file         #
+################################
+
+
+# TODO: income and expenses later
+# income:
+#   - name: job 1 name
+#     value: 100
+#     type: weekly
+#   - name: job 1 bonus
+#     value: 50
+#     type: single
+# 
+# expenses: 
+#   todo: 3
+
+
+
+investments:
+  - ticker: nvda
+    type: buy
+    number: 10
+    price: 15
+    date: 2025-01-10
+  - ticker: voo
+    type: buy
+    number: 5
+    price: 200
+    date: 2024-10-25
+
+
