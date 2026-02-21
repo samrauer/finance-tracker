@@ -1,32 +1,67 @@
-################################
-#         Example file         #
-################################
+version: "1.0"
 
+# INCOME STREAMS
+income:
+  salary:
+    type: "weekly"
+    amount: 1000
+    expected_annual_growth: 0.03 # 3% annual raise
+  bonuses:
+    - name: "Annual Performance Bonus"
+      amount: 1000
+      frequency: "annual"
+      month: 2 # February
+  rsus:
+    - ticker: "COMPANY-A" # Example ticker
+      grant_date: 2025-01-15
+      vesting_schedule:
+        type: "annual"
+        years: 4
+        cliff_months: 12 # Cliff before first vest
+      shares: 10
 
-# TODO: income and expenses later
-# income:
-#   - name: job 1 name
-#     value: 100
-#     type: weekly
-#   - name: job 1 bonus
-#     value: 50
-#     type: single
-# 
-# expenses: 
-#   todo: 3
+# EXPENSES
+expenses:
+  # Current monthly expenses
+  current:
+    rent: 1500
+    food: 300
+    subscriptions: 100
+    fun: 100
+    misc: 100
+  
+  # How expenses change over time
+  assumptions:
+    base_inflation_rate: 0.03 # 3% annual inflation applied to most expenses
+    lifestyle_creep_rate: 0.01 # 1% extra growth reflecting lifestyle upgrades
 
+  # Future planned specific changes to lifestyle
+  future_events:
+    - event: "Buy a House"
+      year: 2040
+      one_time_cost: 80000 # Down payment
+      monthly_cost_change: 1200 # Mortgage + taxes/insurance vs previous rent
+    - event: "Buy a Car"
+      year: 2032
+      one_time_cost: 35000
+      monthly_cost_change: 150 # Insurance and maintenance
 
-
+# INVESTMENTS & TRADES
 investments:
-  - ticker: nvda
-    type: buy
-    number: 10
-    price: 15
-    date: 2025-01-10
-  - ticker: voo
-    type: buy
-    number: 5
-    price: 200
-    date: 2024-10-25
-
-
+  # Individual stock trades to track performance vs index
+  trades:
+    - ticker: "MSFT"
+      date: 2022-04-10
+      type: "buy"
+      shares: 50
+      price_per_share: 280.50
+    - ticker: "MSFT"
+      date: 2023-11-20
+      type: "sell"
+      shares: 20
+      price_per_share: 370.00
+    - ticker: "VOO"
+      date: 2024-01-05
+      type: "buy"
+      shares: 100
+      price_per_share: 430.00
