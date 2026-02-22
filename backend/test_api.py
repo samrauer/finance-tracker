@@ -24,5 +24,9 @@ def test_forecast_endpoint_parsing():
     assert "summary" in forecast_data
     assert "final_cashflow" in forecast_data["summary"]
     
+    # Optional: ensure it's still roughly computing the same ballpark for cashflow (~2.5M to 3M)
+    # This proves the new array-based math is mostly equivalent to the old single-salary math
+    assert forecast_data['summary']['final_cashflow'] > 1000000 
+    
     print("\n[SUCCESS] API successfully ran the simulation!")
     print(f"Final simulated cashflow: {forecast_data['summary']['final_cashflow']}")

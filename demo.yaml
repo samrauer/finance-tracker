@@ -2,33 +2,41 @@ version: "1.0"
 
 # INCOME STREAMS
 income:
-  salary:
-    type: "weekly"
-    amount: 1000
-    expected_annual_growth: 0.03 # 3% annual raise
+  salaries:
+    - name: "Primary Job"
+      type: "weekly"
+      amount: 800
+      expected_annual_growth: 0.03 # 3% annual raise
   bonuses:
     - name: "Annual Performance Bonus"
       amount: 1000
       frequency: "annual"
       month: 2 # February
   rsus:
-    - ticker: "COMPANY-A" # Example ticker
+    - ticker: "MEGA" # Example ticker
       grant_date: 2025-01-15
       vesting_schedule:
         type: "annual"
-        years: 4
+        years: 3
         cliff_months: 12 # Cliff before first vest
-      shares: 10
+      shares: 40
 
 # EXPENSES
 expenses:
-  # Current monthly expenses
-  current:
-    rent: 1500
-    food: 300
-    subscriptions: 100
-    fun: 100
-    misc: 100
+  # Customizable expense list with frequencies
+  items:
+    - name: "Rent"
+      amount: 1400
+      frequency: "monthly"
+    - name: "Groceries"
+      amount: 150
+      frequency: "weekly"
+    - name: "Subscriptions"
+      amount: 50
+      frequency: "monthly"
+    - name: "Car Insurance"
+      amount: 200
+      frequency: "annual"
   
   # How expenses change over time
   assumptions:
@@ -38,11 +46,11 @@ expenses:
   # Future planned specific changes to lifestyle
   future_events:
     - event: "Buy a House"
-      year: 2040
+      year: 2028
       one_time_cost: 80000 # Down payment
       monthly_cost_change: 1200 # Mortgage + taxes/insurance vs previous rent
     - event: "Buy a Car"
-      year: 2032
+      year: 2029
       one_time_cost: 35000
       monthly_cost_change: 150 # Insurance and maintenance
 

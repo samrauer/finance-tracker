@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import date
 
 class Salary(BaseModel):
+    name: str = "Base Salary"
     type: str # e.g. weekly, monthly, annual
     amount: float
     expected_annual_growth: float
@@ -25,16 +26,14 @@ class RSUGrant(BaseModel):
     shares: float
 
 class IncomeStreams(BaseModel):
-    salary: Salary
+    salaries: List[Salary] = Field(default_factory=list)
     bonuses: List[Bonus] = Field(default_factory=list)
     rsus: List[RSUGrant] = Field(default_factory=list)
 
-class CurrentExpenses(BaseModel):
-    rent: float = 0.0
-    food: float = 0.0
-    subscriptions: float = 0.0
-    fun: float = 0.0
-    misc: float = 0.0
+class CustomExpense(BaseModel):
+    name: str
+    amount: float
+    frequency: str # e.g. weekly, monthly, annual
 
 class ExpenseAssumptions(BaseModel):
     base_inflation_rate: float
@@ -47,7 +46,7 @@ class FutureEvent(BaseModel):
     monthly_cost_change: float = 0.0
 
 class Expenses(BaseModel):
-    current: CurrentExpenses
+    items: List[CustomExpense] = Field(default_factory=list)
     assumptions: ExpenseAssumptions
     future_events: List[FutureEvent] = Field(default_factory=list)
 

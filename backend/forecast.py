@@ -15,21 +15,25 @@ def generate_timeline(start_date: date, months: int = 360) -> pl.DataFrame:
     })
     return df
 
-def calculate_salary(df: pl.DataFrame, salary_data) -> pl.Series:
-    """Calculate monthly salary with annual growth."""
-    if salary_data.type == "weekly":
-        base_monthly = salary_data.amount * 52.0 / 12.0
-    elif salary_data.type == "annual":
-        base_monthly = salary_data.amount / 12.0
-    else:
-        base_monthly = salary_data.amount
-        
+def calculate_salaries(df: pl.DataFrame, salaries_data) -> pl.Series:
+    """Calculate monthly salary aggregated from multiple income streams with annual growth."""
+    total_salary_array = np.zeros(len(df), dtype=float)
     start_year = df["year"][0]
     years_elapsed = df["year"] - start_year
     
-    # Compound growth: base * (1 + growth)^years_elapsed
-    monthly_salary = base_monthly * (1 + salary_data.expected_annual_growth) ** years_elapsed
-    return monthly_salary
+    for salary_data in salaries_data:
+        if salary_data.type == "weekly":
+            base_monthly = salary_data.amount * 52.0 / 12.0
+        elif salary_data.type == "annual":
+            base_monthly = salary_data.amount / 12.0
+        else:
+            base_monthly = salary_data.amount
+            
+        # Compound growth: base * (1 + growth)^years_elapsed
+        stream_monthly = base_monthly * (1 + salary_data.expected_annual_growth) ** years_elapsed
+        total_salary_array += stream_monthly.to_numpy()
+        
+    return pl.Series("salary", total_salary_array)
 
 def calculate_bonuses(df: pl.DataFrame, bonuses_data) -> pl.Series:
     """Add bonuses in the specified months."""
@@ -40,20 +44,22 @@ def calculate_bonuses(df: pl.DataFrame, bonuses_data) -> pl.Series:
     return pl.Series("bonus", bonus_array)
 
 def calculate_expenses(df: pl.DataFrame, expenses_data) -> pl.Series:
-    """Calculate monthly expenses with inflation and events."""
-    base_current = (
-        expenses_data.current.rent + 
-        expenses_data.current.food + 
-        expenses_data.current.subscriptions + 
-        expenses_data.current.fun + 
-        expenses_data.current.misc
-    )
+    """Calculate monthly expenses with inflation and events based on custom items."""
+    base_current_monthly = 0.0
+    
+    for item in expenses_data.items:
+        if item.frequency == "weekly":
+            base_current_monthly += item.amount * 52.0 / 12.0
+        elif item.frequency == "annual" or item.frequency == "yearly":
+            base_current_monthly += item.amount / 12.0
+        else:
+            base_current_monthly += item.amount
     
     start_year = df["year"][0]
     years_elapsed = df["year"] - start_year
     
     total_growth_rate = expenses_data.assumptions.base_inflation_rate + expenses_data.assumptions.lifestyle_creep_rate
-    monthly_expenses = base_current * (1 + total_growth_rate) ** years_elapsed
+    monthly_expenses = base_current_monthly * (1 + total_growth_rate) ** years_elapsed
     
     # Add future events
     events_array = np.zeros(len(df), dtype=float)
@@ -74,7 +80,7 @@ def run_simulation(data: FinanceData, months: int = 360) -> dict:
     df = generate_timeline(start_date, months)
     
     df = df.with_columns(
-        salary=calculate_salary(df, data.income.salary),
+        salary=calculate_salaries(df, data.income.salaries),
         bonus=calculate_bonuses(df, data.income.bonuses),
     )
     df = df.with_columns(

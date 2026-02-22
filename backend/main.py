@@ -1,10 +1,21 @@
 from fastapi import FastAPI, Body, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import yaml
 from pydantic import ValidationError
 from .schemas import FinanceData
 from .forecast import run_simulation
 
 app = FastAPI(title="Finance Tracker API")
+
+# Only for local dev
+# TODO: Remove this later
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/api/forecast")
 async def create_forecast(yaml_content: str = Body(..., media_type="text/plain", description="The YAML configuration text")):
